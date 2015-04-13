@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -d @./playlist.json -X PUT  http://localhost:5000/music/api/v1.0/player
