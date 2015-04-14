@@ -57,12 +57,14 @@ def control_player():
     # get the request body
     play_request = request.json
     
+    #check if a command is present
     if('command' in play_request):        
         
         # get the command
         command = play_request['command']
             
         try:
+            #this portion of code might generate exceptions
             
             # PLAY
             if command.lower() == 'play':          
@@ -82,11 +84,13 @@ def control_player():
                        
                             # play the track
                             player.load_and_play(track)
-                        
-                    elif(player.currently_playing != None):
+                            
+                    # No track specified, try to play the last track    
+                    elif(player.currently_playing != None) and (len(player.current_playlist)==0):
                             
                         #play the active track
                         player.load_and_play(player.currently_playing)  
+                        
                     
                 # check playlist if any
                 elif "playlist" in play_request:
@@ -95,8 +99,9 @@ def control_player():
                     # get the playlist
                     playlist = play_request["playlist"];
                    
-                    # check for tracks
-                    if playlist["tracks"] != None:
+                    # check for tracks in the playlist
+                    if (playlist!="") and (playlist["tracks"] != None):
+                        
                         # prepare the playlist holding full track information
                         full_playlist = []
                         
@@ -114,26 +119,26 @@ def control_player():
                             # switch playlist
                             player.load_playlist(full_playlist) 
                             
-                elif len(player.current_playlist) > 0:
-                    
-                    # play existing playlist
-                    if(player.currently_playing_id < len(player.current_playlist)):
-                        # get the current id
-                        target_id = player.currently_playing_id
+                    #nothig specified: try to play the last playlist, if available            
+                    elif len(player.current_playlist) > 0:
                         
-                        # get the current playlist
-                        target_playlist = [track for track in player.current_playlist]
-                        
-                        # reschedule track playing
-                        player.load_playlist(target_playlist)
-                        
-                        # skip to the right track
-                        while (player.currently_playing_id != target_id):
-                            player.next()
-                    else:
-                        # load and start from the beginning
-                        player.load_playlist(player.current_playlist)
-                    
+                        # play existing playlist
+                        if(player.currently_playing_id < len(player.current_playlist)):
+                            # get the current id
+                            target_id = player.currently_playing_id
+                            
+                            # get the current playlist
+                            target_playlist = [track for track in player.current_playlist]
+                            
+                            # reschedule track playing
+                            player.load_playlist(target_playlist)
+                            
+                            # skip to the right track
+                            while (player.currently_playing_id != target_id):
+                                player.next()
+                        else:
+                            # load and start from the beginning
+                            player.load_playlist(player.current_playlist)  
                     
             # STOP  
             elif command.lower() == 'stop':
@@ -167,7 +172,8 @@ def getStatus():
         current = "No track"
     else:
         current = player.currently_playing.jsonifiable()
-            
+    
+    #return the status        
     return  jsonify({"status":player.status, "current" : current, "queue":[track.jsonifiable() for track in player.current_playlist[(player.currently_playing_id + 1):] if track != None]})
 
 
@@ -213,6 +219,7 @@ if __name__ == '__main__':
         else:
             usage()
             sys.exit(-1)
+            
 if(player == None):
     print("Not enough parameters to run...")
     usage()

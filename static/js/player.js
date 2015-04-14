@@ -2,6 +2,7 @@ $(document).ready(function() {
 	attachPlayHandler();
 	attachStopHandler();
 	getStatus();
+	setInterval(getStatus, 2000);
 	loadTracks();
 });
 
@@ -105,8 +106,10 @@ function showTracks(tracks) {
 }
 
 function showStatus(data) {
+	//create the labels (bootstrap) showing the current track and the current status
 	var status = "<span class=\"label label-success\">"
 
+	//compose the track information
 	if (data.current.metadata != undefined) {
 		if (data.current.metadata.artist != null)
 			status = status + data.current.metadata.artist + " - ";
@@ -116,7 +119,10 @@ function showStatus(data) {
 		status = status + data.current
 	}
 
+	//compose the status information
 	status = status + "</span> <span class=\"label label-info\">"
 			+ data.status + "</span>";
+	
+	//show the status
 	$("#status").html(status);
 }

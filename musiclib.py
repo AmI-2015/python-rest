@@ -185,6 +185,10 @@ class Player:
         self.player = Popen("mplayer -slave -quiet -nolirc -msglevel all=-1 -idle", stdin=PIPE, stdout=PIPE, shell=True)          
        
     def load_and_play(self, track):
+        
+        #clear any playlist
+        self.current_playlist = []
+        
         # play the file
         self.player.stdin.write("loadfile \"%s\"\n" % track.path)   
         
