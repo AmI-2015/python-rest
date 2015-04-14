@@ -11,11 +11,14 @@ or
 It provides basic support to single track and playlists.
 
 ### API
-
+-------
 
 **Resource:** tracks
+
 **Url:** /music/api/v1.0/tracks
+
 **Description:** Returns the list of all tracks currently available on the server, without paging
+
 **Example Response:**
 
 ```
