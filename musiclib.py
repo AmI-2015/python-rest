@@ -138,7 +138,7 @@ class TrackList:
             
     def getTrack(self, track_id):
         # get the track info
-        track = [track for track in self.tracks if track.id == int(track_id)]
+        track = [track for track in self.tracks if track.id == track_id]
         
         # return the track info
         if(len(track) > 0):
@@ -193,12 +193,7 @@ class Player:
         self.currently_playing_id = -1
         
         # update the player status
-        self.status = "playing"
-    
-    def play(self):
-        # play the current file
-        self.player.stdin.write("play \n")
-        
+        self.status = "playing"       
 
     def next(self):
         # skip to next track

@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	attachPlayHandler();
 	attachStopHandler();
+	getStatus();
 	loadTracks();
 });
 
@@ -36,7 +37,10 @@ function playTrack(track_id) {
 		type : 'PUT',
 		data : '{"command":"play","track":"' + track_id + '"}',
 		contentType : 'application/json',
-		dataType : 'json'
+		dataType : 'json',
+		success : function(data) {
+			showStatus(data);
+		}
 	});
 }
 
@@ -46,7 +50,16 @@ function stopTrack() {
 		type : 'PUT',
 		data : '{"command":"stop"}',
 		contentType : 'application/json',
-		dataType : 'json'
+		dataType : 'json',
+		success : function(data) {
+			showStatus(data);
+		}
+	});
+}
+
+function getStatus(){
+	$.get("music/api/v1.0/player", function(data) {
+		showStatus(data);
 	});
 }
 
@@ -89,4 +102,21 @@ function showTracks(tracks) {
 
 	// at the end, convert the HTML <select> tag into a searchable combobox.
 	dropdown.combobox();
+}
+
+function showStatus(data) {
+	var status = "<span class=\"label label-success\">"
+
+	if (data.current.metadata != undefined) {
+		if (data.current.metadata.artist != null)
+			status = status + data.current.metadata.artist + " - ";
+		if (data.current.metadata.title != null)
+			status = status + data.current.metadata.title
+	} else {
+		status = status + data.current
+	}
+
+	status = status + "</span> <span class=\"label label-info\">"
+			+ data.status + "</span>";
+	$("#status").html(status);
 }
