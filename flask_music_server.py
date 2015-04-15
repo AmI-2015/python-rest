@@ -41,16 +41,17 @@ def get_tracks():
 
 @app.route('/music/api/v1.0/tracks/<int:track_id>', methods=['GET'])
 def get_track(track_id):
-    if(len(track_id) == 0):
+    try:
+        # get the track
+        track = track_list.getTrack(int(track_id))
+        
+        # if no track has the given id return 404 not found
+        if track == -1:
+            abort(404)
+            # convert the track in its json representation
+        return jsonify({'track': track.jsonifiable()})
+    except:
         abort(403)
-    # get the track
-    track = track_list.getTrack(int(track_id))
-    
-    # if no track has the given id return 404 not found
-    if track == -1:
-        abort(404)
-        # convert the track in its json representation
-    return jsonify({'track': track.jsonifiable()})
 
 @app.route('/music/api/v1.0/player', methods=['PUT'])
 def control_player():
