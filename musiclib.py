@@ -124,7 +124,7 @@ class TrackList:
                     i += 1
         return tracks_in_folder
                     
-    def addTracks(self, tracks):
+    def add_tracks(self, tracks):
         '''
         Adds the given (set) of tracks. 
         '''
@@ -136,15 +136,19 @@ class TrackList:
             # update the last track id
             self.lastId += 1
             
-    def getTrack(self, track_id):
+    def get_track(self, track_id):
+        
+        #the track to return
+        track = None
+        
         # get the track info
-        track = [track for track in self.tracks if track.id == track_id]
+        found_tracks = [track for track in self.tracks if track.id == track_id]
         
         # return the track info
-        if(len(track) > 0):
-            return track[0]
-        else:
-            return -1
+        if(len(found_tracks) > 0):
+            track = found_tracks[0]
+        
+        return track
                 
     def search(self, tag_name=None, value=None):
         '''

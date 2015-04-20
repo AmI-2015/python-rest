@@ -43,10 +43,10 @@ def get_tracks():
 def get_track(track_id):
     try:
         # get the track
-        track = track_list.getTrack(int(track_id))
+        track = track_list.get_track(int(track_id))
         
         # if no track has the given id return 404 not found
-        if track == -1:
+        if track == None:
             abort(404)
             # convert the track in its json representation
         return jsonify({'track': track.jsonifiable()})
@@ -77,14 +77,16 @@ def control_player():
                     
                     if(track_id != None) and (track_id!=""):
                         # get the track
-                        track = track_list.getTrack(int(track_id))
+                        track = track_list.get_track(int(track_id))
                        
-                        if(track != -1):
+                        if(track != None):
                             # debug
                             print ("playing file: \"%s\"\n" % track.path)
                        
                             # play the track
                             player.load_and_play(track)
+                        else:
+                            abort(404)
                             
                     # No track specified, try to play the last track    
                     elif(player.currently_playing != None) and (len(player.current_playlist)==0):
@@ -109,10 +111,10 @@ def control_player():
                         # for all tracks
                         for track in playlist["tracks"]:
                             # get the track
-                            full_track_data = track_list.getTrack(int(track))
+                            full_track_data = track_list.get_track(int(track))
                             
                             # if valid add to the play list
-                            if(full_track_data != -1):
+                            if(full_track_data != None):
                                 # add the track
                                 full_playlist.append(full_track_data)
                             
@@ -155,19 +157,13 @@ def control_player():
         except:
             pass
             
-        # handle currently playing tracks, in particular the empty case
-        if(player.currently_playing == None):
-            current = "No track"
-        else:
-            current = player.currently_playing.jsonifiable()
-            
-        return  jsonify({"status":player.status, "current" : current, "queue":[track.jsonifiable() for track in player.current_playlist[(player.currently_playing_id + 1):] if track != None]})
-    
+        #return the current status
+        return get_status()
     # no command -> abort
     abort(403)
 
 @app.route('/music/api/v1.0/player', methods=['GET'])
-def getStatus():
+def get_status():
     # handle currently playing tracks, in particular the empty case
     if(player.currently_playing == None):
         current = "No track"
@@ -213,7 +209,7 @@ if __name__ == '__main__':
             player = Player()
             
             # initialize the available tracks
-            track_list.addTracks(track_list.scan(a))
+            track_list.add_tracks(track_list.scan(a))
     
             # run flask
             app.run(debug=True)
