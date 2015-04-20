@@ -142,7 +142,7 @@ class TrackList:
         track = None
         
         # get the track info
-        found_tracks = [track for track in self.tracks if track.id == track_id]
+        found_tracks = [trackz for trackz in self.tracks if trackz.id == track_id]
         
         # return the track info
         if(len(found_tracks) > 0):
